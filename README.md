@@ -1,6 +1,6 @@
 # UnityViveAPI
 Single class that tries to implement an easy access to all HTC Vive sensor data/controls in Unity3D.
-To access the Vive data just type
+To access the Vive data just add the Vive script to your scene and type
 ```C#
 Vive.[attribute]
 ```
@@ -26,4 +26,4 @@ anywhere in your code.
 ## Installation
 - Include Steam's SteamVR in your project.
 - Include the "[CameraRig]"-prefab in your scene.
-- Add the Vive-script to your scene, e.g. to the CameraRig.
+- Add the Vive-script to your scene, e.g. to the [CameraRig] prefab.
