@@ -1,7 +1,4 @@
-﻿/************************************************/
-// 2017 by Valentin Kraft // www.valentinkraft.de
-/************************************************/
-
+﻿
 using System.Collections;
 using UnityEngine;
 
@@ -24,6 +21,8 @@ public class Vive : MonoBehaviour
     private GameObject currentCollider;
     private Vector3 lastPosition;
     private BoxCollider[] boxColliders;
+
+    private uint errorMsgCounter = 0;
 
 
     //=============================================================================
@@ -126,6 +125,24 @@ public class Vive : MonoBehaviour
         get { return _controllerR; }
     }
 
+    public static bool IsLeftSystemPressed
+    {
+        get
+        {
+            try { return _controllerLScript.GetPress(SteamVR_Controller.ButtonMask.System); }
+            catch { return false; }
+        }
+    }
+
+    public static bool IsRightSystemPressed
+    {
+        get
+        {
+            try { return _controllerRScript.GetPress(SteamVR_Controller.ButtonMask.System); }
+            catch { return false; }
+        }
+    }
+
     public static bool IsLeftTriggerPressed
     {
         get
@@ -140,6 +157,24 @@ public class Vive : MonoBehaviour
         get
         {
             try { return _controllerRScript.GetPress(SteamVR_Controller.ButtonMask.Trigger); }
+            catch { return false; }
+        }
+    }
+
+    public static bool IsRightTouchpadPressed
+    {
+        get
+        {
+            try { return _controllerRScript.GetPress(SteamVR_Controller.ButtonMask.Touchpad); }
+            catch { return false; }
+        }
+    }
+
+    public static bool IsLeftTouchpadPressed
+    {
+        get
+        {
+            try { return _controllerLScript.GetPress(SteamVR_Controller.ButtonMask.Touchpad); }
             catch { return false; }
         }
     }
@@ -183,12 +218,14 @@ public class Vive : MonoBehaviour
 
     public static void VibrateRController(float duration)
     {
-        instance.StartCoroutine(instance.Vibrate((uint)(40f * duration), _controllerRScript));
+        if (_controllerRScript != null)
+            instance.StartCoroutine(instance.Vibrate((uint)(40f * duration), _controllerRScript));
     }
 
     public static void VibrateLController(float duration)
     {
-        instance.StartCoroutine(instance.Vibrate((uint)(40f * duration), _controllerLScript));
+        if(_controllerLScript!=null)
+            instance.StartCoroutine(instance.Vibrate((uint)(40f * duration), _controllerLScript));
     }
 
 
@@ -199,12 +236,15 @@ public class Vive : MonoBehaviour
 
     void Update()
     {
+        try
+        {
+            foreach (var collider in boxColliders)
+                collider.center = new Vector3(_headsetCamera.transform.localPosition.x, collider.center.y, _headsetCamera.transform.localPosition.z);
 
-        foreach (var collider in boxColliders)
-            collider.center = new Vector3(_headsetCamera.transform.localPosition.x, collider.center.y, _headsetCamera.transform.localPosition.z);
-
-        lastPosition = transform.position;
-        _userHeight = Mathf.Max(_headsetCamera.transform.localPosition.y, _userHeight);
+            lastPosition = transform.position;
+            _userHeight = Mathf.Max(_headsetCamera.transform.localPosition.y, _userHeight);
+        }
+        catch { }
     }
 
     void FixedUpdate()
@@ -216,7 +256,11 @@ public class Vive : MonoBehaviour
         }
         catch
         {
-            Debug.LogWarning("[SPY] There is no SteamVR_TrackedObject script assigned to the current controller! Are the controllers activated?");
+            if (errorMsgCounter < 5)
+            {
+                Debug.LogWarning("[SPY] There is no SteamVR_TrackedObject script assigned to the current controller! Are the controllers activated?");
+                errorMsgCounter++;
+            }
         }
     }
 
