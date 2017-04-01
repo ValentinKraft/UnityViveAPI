@@ -92,12 +92,12 @@ public class Vive : MonoBehaviour
     /// </summary>
     private void InitCustom()
     {
-        lastPosition = transform.position;
+        //lastPosition = transform.position;
 
-        boxColliders = GetComponents<BoxCollider>();
+        //boxColliders = GetComponents<BoxCollider>();
 
-        if (boxColliders.Length == 0)
-            Debug.LogWarning("Couldn't find CameraRig colliders");
+        //if (boxColliders.Length == 0)
+        //    Debug.LogWarning("Couldn't find CameraRig colliders");
     }
 
 
@@ -236,15 +236,8 @@ public class Vive : MonoBehaviour
 
     void Update()
     {
-        try
-        {
-            foreach (var collider in boxColliders)
-                collider.center = new Vector3(_headsetCamera.transform.localPosition.x, collider.center.y, _headsetCamera.transform.localPosition.z);
-
-            lastPosition = transform.position;
-            _userHeight = Mathf.Max(_headsetCamera.transform.localPosition.y, _userHeight);
-        }
-        catch { }
+        lastPosition = transform.position;
+        _userHeight = Mathf.Max(_headsetCamera.transform.localPosition.y, _userHeight);
     }
 
     void FixedUpdate()
